@@ -1,0 +1,24 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:39183",
+      "sslPort": 44358
+    }
+  },
+  "profiles": {
+    "MoodBot": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7177;http://localhost:5177",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "TelegramToken": "1731789552:AAFRFI1UkiPjLR5w1cquauUzANaQg_DPwDc"
+      }
+    }
+  }
+}
