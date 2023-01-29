@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using ChatBot.Services;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 
@@ -27,11 +28,11 @@ namespace MoodBot.Services
 
             var chatId = message.Chat.Id;
 
-            Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
+            string answerMessage = NextMessageDecigion.GetNextMessage(messageText);
 
             await botClient.SendTextMessageAsync(
                 chatId: chatId,
-                text: "You said: \"" + messageText + "\"\nBot is in development. Thanks for testing!",
+                text: answerMessage,
                 cancellationToken: cancellationToken);
         }
 
