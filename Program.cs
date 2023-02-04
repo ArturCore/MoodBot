@@ -1,3 +1,4 @@
+using MoodBot;
 using MoodBot.Services;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
@@ -8,6 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddMvc();
+
+builder.Services.AddDbContext<ApplicationContext>();
+
+var app = builder.Build();
 
 BotService chatBot = new BotService();
 using var cts = new CancellationTokenSource();
@@ -21,8 +27,6 @@ chatBot.GetBotClient().StartReceiving(
     receiverOptions: receiverOptions,
     cancellationToken: cts.Token
 );
-
-var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
