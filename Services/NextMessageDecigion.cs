@@ -1,12 +1,14 @@
-﻿namespace ChatBot.Services
+﻿using MoodBot;
+
+namespace ChatBot.Services
 {
     public class NextMessageDecigion
     {
-        public static string GetNextMessage(string command)
+        public static string GetNextMessage(int userId, string lastMessage, string message)
         {
             string result = string.Empty;
-
-            switch (command)
+            // TODO: Work with Db (all messages text need to save in Db). Add defaultText. Also work with messageCodes.
+            switch (message)
             {
                 case "/start":
                     result = "What's your mood today?";

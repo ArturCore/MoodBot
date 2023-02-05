@@ -1,8 +1,8 @@
 ﻿namespace MoodBot.Models.Db
 {
-    public class User
+    public class TelegramUser
     {
-        public int UserId { get; set; }
-        public string BotId { get; set; }
+        public int Id { get; set; }
+        public long BotUserId { get; set; }
     }
 }
