@@ -1,16 +1,21 @@
-﻿using Telegram.Bot;
+﻿using ChatBot.Services;
+using MoodBot.Models.Db;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
+using MoodBot.Lists;
 
 namespace MoodBot.Services
 {
     public class BotService
     {
         TelegramBotClient client { get; }
-        public BotService()
+        private ApplicationContext _appContext;
+        public BotService(IServiceProvider serviceProvider)
         {
             var token = Environment.GetEnvironmentVariable("TelegramToken");
             client = new TelegramBotClient(token);
+            _appContext = serviceProvider.GetRequiredService<ApplicationContext>();
         }
 
         public TelegramBotClient GetBotClient()
@@ -25,14 +30,33 @@ namespace MoodBot.Services
             if (message.Text is not { } messageText)
                 return;
 
-            var chatId = message.Chat.Id;
+            long chatId = message.Chat.Id;
+            int userId;
+            {
+                TelegramUser user = _appContext.GetUserById(chatId);
+                if (user != null)
+                {
+                    userId = user.Id;
+                }
+                else
+                {
+                    userId = _appContext.AddUser(chatId).Id;
+                }
+            }
 
-            Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
+            string? lastMessage = _appContext.GetLastMessageCode(userId);
+
+            string answerMessage = NextMessageDecigion.GetNextMessage(lastMessage, messageText);
 
             await botClient.SendTextMessageAsync(
                 chatId: chatId,
-                text: "You said: \"" + messageText + "\"\nBot is in development. Thanks for testing!",
+                text: answerMessage,
                 cancellationToken: cancellationToken);
+
+            if(BotMessages.GetDefaultMessage() != answerMessage)
+            {
+                _appContext.AddOrUpdateLastMessage(userId, answerMessage);
+            }
         }
 
         public Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
