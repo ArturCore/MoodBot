@@ -6,7 +6,6 @@ namespace MoodBot
     public class ApplicationContext : DbContext
     {
         public DbSet<TelegramUser> Users => Set<TelegramUser>();
-        public DbSet<Message> Messages => Set<Message>();
         public DbSet<LastMessage> LastMessages => Set<LastMessage>();
         public ApplicationContext() => Database.EnsureCreated();
 
@@ -38,27 +37,36 @@ namespace MoodBot
             }
         }
 
-        internal string GetLastMessageCode(int userId)
+        internal string? GetLastMessageCode(int userId)
         {
             using (ApplicationContext context = new ApplicationContext())
             {
-                int messageId = context.LastMessages.FirstOrDefault(lm => lm.UserId == userId).MessageId;
-                return context.Messages.FirstOrDefault(m => m.MessageId == messageId).MessageCode;
+                LastMessage lastMessage = context.LastMessages.FirstOrDefault(lm => lm.UserId == userId);
+                return lastMessage == null ? string.Empty : lastMessage.MessageCode;
             }
         }
 
-        internal void AddLastMessageCode(int userId, string messageCode)
+        internal void AddOrUpdateLastMessage(int userId, string messageCode)
         {
             using (ApplicationContext context = new ApplicationContext())
             {
-                int messageId = context.Messages.FirstOrDefault(m => m.MessageCode == messageCode).MessageId;
-                LastMessage lastMessage = new LastMessage
+                LastMessage curLastMessage = context.LastMessages.FirstOrDefault(lm => lm.UserId == userId);
+                if(curLastMessage == null)
                 {
-                    MessageId = messageId,
-                    UserId = userId
-                };
-                context.LastMessages.Add(lastMessage);
-                context.SaveChanges();
+                    LastMessage newLastMessage = new LastMessage
+                    {
+                        MessageCode = messageCode,
+                        UserId = userId
+                    };
+                    context.LastMessages.Add(newLastMessage);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    curLastMessage.MessageCode = messageCode;
+                    context.Update(curLastMessage);
+                    context.SaveChanges();
+                }                    
             }
         }
     }

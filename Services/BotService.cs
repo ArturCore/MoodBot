@@ -3,6 +3,7 @@ using MoodBot.Models.Db;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
+using MoodBot.Lists;
 
 namespace MoodBot.Services
 {
@@ -32,20 +33,30 @@ namespace MoodBot.Services
             long chatId = message.Chat.Id;
             int userId;
             {
-                // UNDONE: you have a problem here. If user isn't inside the table TelegramUser - you will catch an exception
                 TelegramUser user = _appContext.GetUserById(chatId);
-                userId = user != null ? user.Id : _appContext.AddUser(chatId).Id;
+                if (user != null)
+                {
+                    userId = user.Id;
+                }
+                else
+                {
+                    userId = _appContext.AddUser(chatId).Id;
+                }
             }
 
-            string lastMessage = _appContext.GetLastMessageCode(userId);
+            string? lastMessage = _appContext.GetLastMessageCode(userId);
 
-            string answerMessage = NextMessageDecigion.GetNextMessage(userId, lastMessage, messageText);
-            // TODO: add new lastMessage to Db. Don't add it if answer if default.
+            string answerMessage = NextMessageDecigion.GetNextMessage(lastMessage, messageText);
 
             await botClient.SendTextMessageAsync(
                 chatId: chatId,
                 text: answerMessage,
                 cancellationToken: cancellationToken);
+
+            if(BotMessages.GetDefaultMessage() != answerMessage)
+            {
+                _appContext.AddOrUpdateLastMessage(userId, answerMessage);
+            }
         }
 
         public Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)

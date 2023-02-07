@@ -1,27 +1,32 @@
 ﻿using MoodBot;
+using MoodBot.Lists;
 
 namespace ChatBot.Services
 {
     public class NextMessageDecigion
     {
-        public static string GetNextMessage(int userId, string lastMessage, string message)
+
+        public static string GetNextMessage(string? lastMessage, string message)
         {
-            string result = string.Empty;
-            // TODO: Work with Db (all messages text need to save in Db). Add defaultText. Also work with messageCodes.
-            switch (message)
+            string resultCode = string.Empty;
+            string messageCode = BotMessages.Messages.FirstOrDefault(m => m.Value == message).Key;
+            switch (messageCode)
             {
-                case "/start":
-                    result = "What's your mood today?";
+                case null:
+                case "":
+                case "start":
+                    resultCode = "moodQuestion";
                     break;
-                case "Save today's mood":
-                    result = "What's your mood today?";
-                    break;
-                default: 
-                    result = "What you want to do? Repeat, please :3";
+                case "blushMood":
+                    resultCode = "thanksGoodbye";
                     break;
             }
+            if(resultCode == string.Empty)
+            {
+                resultCode = "default";
+            }
 
-            return result;
-        }
+            return BotMessages.Messages.FirstOrDefault(m => m.Key == resultCode).Value;
+        }        
     }
 }
