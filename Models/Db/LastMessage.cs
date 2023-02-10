@@ -1,6 +1,6 @@
 ﻿namespace MoodBot.Models.Db
 {
-    public class LastMessage
+    public class LastBotMessage
     {
         public int Id { get; set; }
         public string MessageCode { get; set; }
