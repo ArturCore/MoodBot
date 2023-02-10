@@ -44,9 +44,9 @@ namespace MoodBot.Services
                 }
             }
 
-            string? lastMessage = _appContext.GetLastMessageCode(userId);
+            string? lastBotMessage = _appContext.GetLastMessageCode(userId);
 
-            string answerMessage = NextMessageDecigion.GetNextMessage(lastMessage, messageText);
+            string answerMessage = NextMessageDecigion.GetNextMessage(lastBotMessage, messageText);
 
             await botClient.SendTextMessageAsync(
                 chatId: chatId,
