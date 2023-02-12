@@ -4,6 +4,7 @@ using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using MoodBot.Lists;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace MoodBot.Services
 {
@@ -46,14 +47,17 @@ namespace MoodBot.Services
 
             string? lastBotMessage = _appContext.GetLastMessageCode(userId);
 
+            //what to do if we don't need keyboard? Can we send null to replyMarkup?
             string answerMessage = NextMessageDecigion.GetNextMessage(lastBotMessage, messageText);
+            IReplyMarkup replyMarkup = ReplyMarkups.GetReplyMarkup(answerMessage);
 
             await botClient.SendTextMessageAsync(
                 chatId: chatId,
                 text: answerMessage,
+                replyMarkup: replyMarkup,
                 cancellationToken: cancellationToken);
 
-            if(BotMessages.GetDefaultMessage() != answerMessage)
+            if (BotMessages.GetDefaultMessage() != answerMessage)
             {
                 _appContext.AddOrUpdateLastMessage(userId, answerMessage);
             }
