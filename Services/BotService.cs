@@ -48,18 +48,19 @@ namespace MoodBot.Services
             string? lastBotMessage = _appContext.GetLastMessageCode(userId);
 
             //what to do if we don't need keyboard? Can we send null to replyMarkup?
-            string answerMessage = NextMessageDecigion.GetNextMessage(lastBotMessage, messageText);
-            IReplyMarkup replyMarkup = ReplyMarkups.GetReplyMarkup(answerMessage);
+            string messageCode = NextMessageDecigion.GetNextMessageCode(lastBotMessage, messageText);
+            string answerText = BotMessages.GetMessageByCode(messageCode);
+            IReplyMarkup replyMarkup = ReplyMarkups.GetReplyMarkup(messageCode);
 
             await botClient.SendTextMessageAsync(
                 chatId: chatId,
-                text: answerMessage,
+                text: answerText,
                 replyMarkup: replyMarkup,
                 cancellationToken: cancellationToken);
 
-            if (BotMessages.GetDefaultMessage() != answerMessage)
+            if (BotMessages.GetDefaultMessage() != answerText)
             {
-                _appContext.AddOrUpdateLastMessage(userId, answerMessage);
+                _appContext.AddOrUpdateLastMessage(userId, answerText);
             }
         }
 

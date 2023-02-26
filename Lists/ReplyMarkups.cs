@@ -1,24 +1,25 @@
-﻿using Telegram.Bot.Types.ReplyMarkups;
+﻿using System.Linq;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace MoodBot.Lists
 {
     public class ReplyMarkups
     {
-        public static IReplyMarkup GetReplyMarkup(string message)
+        public static IReplyMarkup GetReplyMarkup(string messageCode)
         {
-            string[,] buttons;
-            switch (message)
+            //string[,] buttons;
+            KeyboardButton[][] keyboardButtons = new KeyboardButton[][] { };
+            switch (messageCode)
             {
+                case "moodQuestion":
                 case "start":
-                    buttons = new string [,] { { "Set my mood" }, { "Cancel" } };
+                    keyboardButtons = new KeyboardButton[][]
+                    {
+                        new KeyboardButton[]{ "Set my mood" },
+                        new KeyboardButton[]{ "Cancel" } 
+                    };
                     break;
             }
-
-            // TODO: form dynamic keyboards from array buttons
-            KeyboardButton[][] keyboardButtons = new KeyboardButton[][]
-            {
-                new KeyboardButton[] { "Cancel22" }
-            };
 
             ReplyKeyboardMarkup replyKeyboardMarkup = new(keyboardButtons)
             {

@@ -6,7 +6,7 @@ namespace ChatBot.Services
     public class NextMessageDecigion
     {
 
-        public static string GetNextMessage(string? lastBotMessage, string message)
+        public static string GetNextMessageCode(string? lastBotMessage, string message)
         {
             string resultCode = string.Empty;
             bool isResultAllow;
@@ -72,7 +72,7 @@ namespace ChatBot.Services
                     }
                 }                
             }
-            return BotMessages.Messages.FirstOrDefault(m => m.Key == resultCode).Value;
+            return resultCode;
         }        
     }
 }

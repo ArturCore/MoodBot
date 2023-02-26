@@ -14,10 +14,15 @@
             new KeyValuePair<string, string>("inDevelopment", "This section in development")
 
         };
-        
+
         public static string GetDefaultMessage()
         {
             return Messages.FirstOrDefault(m => m.Key == "default").Value;
+        }
+
+        public static string GetMessageByCode(string messageCode)
+        {
+            return Messages.FirstOrDefault(m => m.Key == messageCode).Value;
         }
     }
 }
